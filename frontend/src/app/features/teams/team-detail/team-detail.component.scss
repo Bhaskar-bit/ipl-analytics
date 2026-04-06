@@ -1,0 +1,58 @@
+.team-detail { padding: 1.5rem; max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem; }
+
+.team-hero {
+  background: linear-gradient(135deg, var(--team-color, var(--color-primary)), color-mix(in srgb, var(--team-color, var(--color-primary)) 60%, #000));
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  &__inner { display: flex; align-items: center; gap: 1rem; }
+  &__badge { background: rgba(255,255,255,0.25); padding: 0.4rem 0.75rem; border-radius: 8px; font-weight: 800; font-size: 1.25rem; letter-spacing: 1px; }
+  &__name { font-size: 1.25rem; font-weight: 700; margin: 0; }
+  &__meta { font-size: 0.8rem; opacity: 0.8; margin: 0.25rem 0 0; }
+}
+
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+
+  .chart-wide { grid-column: 1 / -1; }
+}
+
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+
+  &__title { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin: 0 0 1rem; }
+}
+
+.chart-sm { height: 200px; }
+.chart-md { height: 240px; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  th { color: var(--text-muted); font-weight: 500; padding: 0.4rem 0.6rem; text-align: left; font-size: 0.7rem; text-transform: uppercase; }
+  td { padding: 0.55rem 0.6rem; border-top: 1px solid var(--border-color); color: var(--text-primary); }
+}
+
+.font-bold { font-weight: 700; }
+.text-success { color: var(--color-success); }
+.text-danger { color: var(--color-danger); }
+.empty-state { color: var(--text-muted); text-align: center; padding: 1rem; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; }
+.pill--green { background: var(--color-success-muted); color: var(--color-success); }
+.pill--gray { background: var(--surface-hover); color: var(--text-muted); }
+.loading-placeholder { padding: 3rem; text-align: center; color: var(--text-muted); }

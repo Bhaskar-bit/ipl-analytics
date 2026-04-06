@@ -1,0 +1,78 @@
+<div class="team-detail" *ngIf="team(); else loading">
+  <!-- Hero -->
+  <div class="team-hero" [style.--team-color]="getTeamColor(team()!.short_name)">
+    <div class="team-hero__inner">
+      <div class="team-hero__badge">{{ team()!.short_name }}</div>
+      <div>
+        <h1 class="team-hero__name">{{ team()!.full_name }}</h1>
+        <p class="team-hero__meta">{{ team()!.home_venue }} · Since {{ team()!.active_from }}</p>
+      </div>
+    </div>
+    <a routerLink="/head-to-head" [queryParams]="{ team1: team()!.id }" class="btn btn--light">Compare H2H</a>
+  </div>
+
+  @if (error()) {
+    <app-error-state [message]="error()!" (retry)="loadStats()"></app-error-state>
+  }
+
+  <!-- Stats KPIs -->
+  @if (stats()) {
+    <div class="kpi-grid">
+      <app-stat-card label="Matches" [value]="stats()!.matches_played" icon="zap"></app-stat-card>
+      <app-stat-card label="Wins" [value]="stats()!.wins" icon="trophy"></app-stat-card>
+      <app-stat-card label="Win Rate" [value]="(stats()!.win_rate * 100 | number:'1.1-1') + '%'" icon="zap"></app-stat-card>
+      <app-stat-card label="Avg Score (Bat First)" [value]="stats()!.avg_score_batting_first ?? 0" icon="zap"></app-stat-card>
+    </div>
+  }
+
+  <!-- Charts -->
+  <div class="charts-row">
+    <div class="card">
+      <h2 class="card__title">Win / Loss Split</h2>
+      <div echarts [options]="winRateChartOption()" class="chart-sm"></div>
+    </div>
+    <div class="card">
+      <h2 class="card__title">Home vs Away Win%</h2>
+      <div echarts [options]="homeAwayChartOption()" class="chart-sm"></div>
+    </div>
+    <div class="card chart-wide">
+      <h2 class="card__title">Season-wise Performance</h2>
+      <div echarts [options]="seasonChartOption()" class="chart-md"></div>
+    </div>
+  </div>
+
+  <!-- Season records table -->
+  <div class="card">
+    <h2 class="card__title">Season Records</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Season</th><th>Played</th><th>W</th><th>L</th><th>Pts</th><th>NRR</th><th>Position</th><th>Playoffs</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of seasonRecords(); track r.season) {
+          <tr>
+            <td class="font-bold">{{ r.season }}</td>
+            <td>{{ r.matches_played }}</td>
+            <td class="text-success">{{ r.wins }}</td>
+            <td class="text-danger">{{ r.losses }}</td>
+            <td class="font-bold">{{ r.points }}</td>
+            <td [class.text-success]="r.nrr > 0" [class.text-danger]="r.nrr < 0">{{ r.nrr | number:'1.2-2' }}</td>
+            <td>#{{ r.position }}</td>
+            <td>
+              <span *ngIf="r.qualified_for_playoffs" class="pill pill--green">Yes</span>
+              <span *ngIf="!r.qualified_for_playoffs" class="pill pill--gray">No</span>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="8" class="empty-state">No season data.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading-placeholder">Loading team data...</div>
+</ng-template>

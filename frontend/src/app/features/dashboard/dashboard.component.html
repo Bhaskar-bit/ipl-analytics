@@ -1,0 +1,130 @@
+<div class="dashboard">
+  <header class="page-header">
+    <div>
+      <h1 class="page-header__title">IPL Dashboard</h1>
+      <p class="page-header__sub">Season {{ currentSeason() }} · Live Analytics</p>
+    </div>
+    <a routerLink="/predictor" class="btn btn--primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Predict Winner
+    </a>
+  </header>
+
+  <!-- Error state -->
+  @if (error()) {
+    <app-error-state [message]="error()!" (retry)="loadData(currentSeason())"></app-error-state>
+  }
+
+  <!-- KPI Strip -->
+  @if (summary()) {
+    <section class="kpi-grid">
+      <app-stat-card
+        label="Champion"
+        [value]="summary()!.winner_short_name"
+        sub="Season winner"
+        icon="trophy"
+        accentColor="#F5A623">
+      </app-stat-card>
+      <app-stat-card
+        label="Total Matches"
+        [value]="summary()!.total_matches"
+        sub="This season"
+        icon="zap">
+      </app-stat-card>
+      <app-stat-card
+        label="Top Scorer"
+        [value]="summary()!.top_scorer_runs + ' runs'"
+        [sub]="summary()!.top_scorer_name"
+        icon="users">
+      </app-stat-card>
+      <app-stat-card
+        label="Most Wickets"
+        [value]="summary()!.top_wicket_taker_wickets + ' wkts'"
+        [sub]="summary()!.top_wicket_taker_name"
+        icon="zap">
+      </app-stat-card>
+      <app-stat-card
+        label="Total Sixes"
+        [value]="summary()!.total_sixes"
+        sub="Hit this season"
+        icon="trophy">
+      </app-stat-card>
+    </section>
+  }
+
+  <!-- Charts Row -->
+  <section class="charts-row">
+    <div class="card chart-card">
+      <h2 class="card__title">Average Score Trend (All Seasons)</h2>
+      <div echarts [options]="runTrendChartOption()" class="chart-container"></div>
+    </div>
+    <div class="card chart-card">
+      <h2 class="card__title">Sixes Across Seasons</h2>
+      <div echarts [options]="sixesChartOption()" class="chart-container"></div>
+    </div>
+  </section>
+
+  <!-- Bottom Row -->
+  <section class="bottom-row">
+    <!-- Recent Matches -->
+    <div class="card">
+      <div class="card__header">
+        <h2 class="card__title">Recent Matches</h2>
+        <a routerLink="/seasons" class="link-more">View All</a>
+      </div>
+      <div class="match-list">
+        @for (match of recentMatches(); track match.id) {
+          <div class="match-item">
+            <span class="match-item__date">{{ match.date | date:'d MMM' }}</span>
+            <div class="match-item__teams">
+              <span [class.match-item__team--winner]="match.winner_id === match.team1_id">
+                {{ match.team1_short_name }}
+              </span>
+              <span class="match-item__vs">vs</span>
+              <span [class.match-item__team--winner]="match.winner_id === match.team2_id">
+                {{ match.team2_short_name }}
+              </span>
+            </div>
+            <span class="match-item__score">
+              {{ match.team1_score }}/{{ match.team1_wickets }} – {{ match.team2_score }}/{{ match.team2_wickets }}
+            </span>
+          </div>
+        } @empty {
+          <p class="empty-state">No recent matches found.</p>
+        }
+      </div>
+    </div>
+
+    <!-- Top Batsmen -->
+    <div class="card">
+      <div class="card__header">
+        <h2 class="card__title">Orange Cap Race</h2>
+        <a [routerLink]="['/seasons', currentSeason()]" class="link-more">Full Table</a>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Player</th>
+            <th>Team</th>
+            <th class="text-right">Runs</th>
+            <th class="text-right">SR</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of topBatsmen(); track b.player_id; let i = $index) {
+            <tr [routerLink]="['/players', b.player_id]" class="table-row--clickable">
+              <td class="rank">{{ i + 1 }}</td>
+              <td>{{ b.display_name }}</td>
+              <td><span class="team-pill">{{ b.team_short_name }}</span></td>
+              <td class="text-right font-bold">{{ b.runs }}</td>
+              <td class="text-right text-secondary">{{ b.strike_rate }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="empty-state">No data available.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

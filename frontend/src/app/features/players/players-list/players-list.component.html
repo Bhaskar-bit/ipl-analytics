@@ -1,0 +1,51 @@
+<div class="page">
+  <header class="page-header">
+    <h1>Players</h1>
+    <p class="text-secondary">{{ filteredPlayers().length }} of {{ allPlayers().length }} players</p>
+  </header>
+
+  <!-- Filters -->
+  <div class="filters">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="text"
+        placeholder="Search players..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        class="search-input"
+      />
+    </div>
+    <div class="role-filters">
+      @for (role of roles; track role.value) {
+        <button
+          class="role-btn"
+          [class.role-btn--active]="selectedRole() === role.value"
+          (click)="selectedRole.set(role.value)"
+        >
+          {{ role.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Players Grid -->
+  <div class="players-grid">
+    @for (player of filteredPlayers(); track player.id) {
+      <a [routerLink]="['/players', player.id]" class="player-card">
+        <div class="player-card__avatar">
+          {{ player.display_name.charAt(0) }}
+        </div>
+        <div class="player-card__body">
+          <h3 class="player-card__name">{{ player.display_name }}</h3>
+          <p class="player-card__role">{{ roleIcon(player.primary_role) }} {{ player.primary_role | titlecase }}</p>
+          <p class="player-card__nat">{{ player.nationality }}</p>
+        </div>
+      </a>
+    } @empty {
+      <div class="empty-state">No players found matching your filters.</div>
+    }
+  </div>
+</div>

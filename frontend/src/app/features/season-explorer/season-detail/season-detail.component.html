@@ -1,0 +1,123 @@
+<div class="season-detail">
+  @if (error()) {
+    <app-error-state [message]="error()!"></app-error-state>
+  }
+
+  <header class="page-header">
+    <div>
+      <h1>IPL {{ year }}</h1>
+      <p class="text-secondary" *ngIf="summary()">Champion: <strong>{{ summary()!.winner_short_name }}</strong></p>
+    </div>
+    <a routerLink="/seasons" class="btn btn--secondary">← All Seasons</a>
+  </header>
+
+  <!-- KPI Strip -->
+  @if (summary()) {
+    <div class="kpi-grid">
+      <app-stat-card label="Matches" [value]="summary()!.total_matches" icon="zap"></app-stat-card>
+      <app-stat-card label="Total Runs" [value]="summary()!.total_runs" icon="trophy"></app-stat-card>
+      <app-stat-card label="Sixes" [value]="summary()!.total_sixes" icon="zap"></app-stat-card>
+      <app-stat-card label="Highest Score" [value]="summary()!.highest_team_score" icon="trophy"></app-stat-card>
+    </div>
+  }
+
+  <div class="main-grid">
+    <!-- Points Table -->
+    <div class="card">
+      <h2 class="card__title">Points Table</h2>
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>L</th><th>Pts</th><th>NRR</th><th>PO</th></tr>
+        </thead>
+        <tbody>
+          @for (row of pointsTable(); track row.team_id) {
+            <tr>
+              <td class="rank">{{ row.position }}</td>
+              <td>
+                <div class="team-cell">
+                  <div class="team-dot" [style.background]="getTeamColor(row.team_short_name)"></div>
+                  <a [routerLink]="['/teams', row.team_id]" class="link">{{ row.team_short_name }}</a>
+                </div>
+              </td>
+              <td>{{ row.matches_played }}</td>
+              <td class="text-success">{{ row.wins }}</td>
+              <td class="text-danger">{{ row.losses }}</td>
+              <td class="font-bold">{{ row.points }}</td>
+              <td [class.text-success]="row.nrr > 0" [class.text-danger]="row.nrr < 0">{{ row.nrr | number:'1.2-2' }}</td>
+              <td><span *ngIf="row.qualified_for_playoffs" class="pill-yes">✓</span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Points Chart -->
+    <div class="card">
+      <h2 class="card__title">Points Comparison</h2>
+      <div echarts [options]="pointsChartOption()" style="height:280px;"></div>
+    </div>
+  </div>
+
+  <!-- Orange / Purple Cap -->
+  <div class="caps-grid">
+    <div class="card">
+      <h2 class="card__title">Orange Cap — Top Batsmen</h2>
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Player</th><th>Team</th><th>Runs</th><th>Avg</th><th>SR</th></tr></thead>
+        <tbody>
+          @for (b of topBatsmen(); track b.player_id; let i = $index) {
+            <tr>
+              <td class="rank">{{ i + 1 }}</td>
+              <td><a [routerLink]="['/players', b.player_id]" class="link">{{ b.display_name }}</a></td>
+              <td><span class="team-pill" [style.background]="getTeamColor(b.team_short_name) + '22'" [style.color]="getTeamColor(b.team_short_name)">{{ b.team_short_name }}</span></td>
+              <td class="font-bold">{{ b.runs }}</td>
+              <td>{{ b.average | number:'1.1-1' }}</td>
+              <td class="text-secondary">{{ b.strike_rate | number:'1.1-1' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2 class="card__title">Purple Cap — Top Bowlers</h2>
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Player</th><th>Team</th><th>Wkts</th><th>Avg</th><th>Eco</th></tr></thead>
+        <tbody>
+          @for (b of topBowlers(); track b.player_id; let i = $index) {
+            <tr>
+              <td class="rank">{{ i + 1 }}</td>
+              <td><a [routerLink]="['/players', b.player_id]" class="link">{{ b.display_name }}</a></td>
+              <td><span class="team-pill" [style.background]="getTeamColor(b.team_short_name) + '22'" [style.color]="getTeamColor(b.team_short_name)">{{ b.team_short_name }}</span></td>
+              <td class="font-bold">{{ b.wickets }}</td>
+              <td>{{ b.average | number:'1.1-1' }}</td>
+              <td class="text-secondary">{{ b.economy | number:'1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Matches Grid -->
+  <div class="card">
+    <h2 class="card__title">All Matches ({{ matches().length }})</h2>
+    <div class="matches-grid">
+      @for (m of matches(); track m.id) {
+        <a [routerLink]="['/seasons', year, 'match', m.id]" class="match-card">
+          <div class="match-card__stage">{{ stageLabel(m.stage) }}</div>
+          <div class="match-card__teams">
+            <span [class.winner]="m.winner_id === m.team1_id">{{ m.team1_short_name }}</span>
+            <span class="match-card__score">{{ m.team1_score }}/{{ m.team1_wickets }}</span>
+          </div>
+          <div class="match-card__vs">vs</div>
+          <div class="match-card__teams">
+            <span [class.winner]="m.winner_id === m.team2_id">{{ m.team2_short_name }}</span>
+            <span class="match-card__score">{{ m.team2_score }}/{{ m.team2_wickets }}</span>
+          </div>
+          <div class="match-card__date">{{ m.date | date:'d MMM' }}</div>
+        </a>
+      }
+    </div>
+  </div>
+</div>

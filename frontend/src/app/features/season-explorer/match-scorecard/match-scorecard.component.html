@@ -1,0 +1,68 @@
+<div class="scorecard-page">
+  @if (error()) {
+    <app-error-state [message]="error()!"></app-error-state>
+  }
+
+  @if (scorecard(); as sc) {
+    <header class="page-header">
+      <a [routerLink]="['/seasons', year]" class="back-link">← IPL {{ year }}</a>
+      <h1>Match Scorecard</h1>
+      <p class="match-meta">
+        {{ sc.match.date | date:'d MMM y' }} · {{ sc.match.venue_name }}
+        <span class="stage-badge">{{ sc.match.stage | titlecase }}</span>
+      </p>
+      <p class="match-result" *ngIf="sc.match.winner_short_name">
+        <strong>{{ sc.match.winner_short_name }}</strong> won by
+        {{ sc.match.win_margin }} {{ sc.match.win_by }}
+      </p>
+    </header>
+
+    @for (innings of sc.innings; track innings.innings_number) {
+      <div class="innings-card card">
+        <div class="innings-header">
+          <h2>{{ innings.innings_number === 1 ? '1st' : '2nd' }} Innings — Batting Team</h2>
+          <div class="innings-total">{{ innings.total_runs }}/{{ innings.total_wickets }} ({{ innings.total_overs }} ov)</div>
+        </div>
+
+        <!-- Batting -->
+        <h3 class="sub-title">Batting</h3>
+        <table class="data-table">
+          <thead><tr><th>Batter</th><th>Dismissal</th><th class="text-right">R</th><th class="text-right">B</th><th class="text-right">4s</th><th class="text-right">6s</th><th class="text-right">SR</th></tr></thead>
+          <tbody>
+            @for (b of innings.batting_performances; track b.player_id) {
+              <tr>
+                <td class="font-bold">{{ b.player_name }}</td>
+                <td class="text-secondary dismissal">{{ b.dismissal }}</td>
+                <td class="text-right font-bold">{{ b.runs }}</td>
+                <td class="text-right text-secondary">{{ b.balls }}</td>
+                <td class="text-right">{{ b.fours }}</td>
+                <td class="text-right">{{ b.sixes }}</td>
+                <td class="text-right text-secondary">{{ b.strike_rate | number:'1.1-1' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <!-- Bowling -->
+        <h3 class="sub-title">Bowling</h3>
+        <table class="data-table">
+          <thead><tr><th>Bowler</th><th class="text-right">O</th><th class="text-right">M</th><th class="text-right">R</th><th class="text-right">W</th><th class="text-right">Eco</th></tr></thead>
+          <tbody>
+            @for (b of innings.bowling_performances; track b.player_id) {
+              <tr>
+                <td class="font-bold">{{ b.player_name }}</td>
+                <td class="text-right">{{ b.overs }}</td>
+                <td class="text-right">{{ b.maidens }}</td>
+                <td class="text-right">{{ b.runs }}</td>
+                <td class="text-right font-bold">{{ b.wickets }}</td>
+                <td class="text-right text-secondary">{{ b.economy | number:'1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  } @else if (!error()) {
+    <div class="loading-placeholder">Loading scorecard...</div>
+  }
+</div>

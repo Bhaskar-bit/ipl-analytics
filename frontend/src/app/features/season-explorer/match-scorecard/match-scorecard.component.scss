@@ -1,0 +1,27 @@
+.scorecard-page { padding: 1.5rem; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.25rem; }
+.page-header { display: flex; flex-direction: column; gap: 0.3rem; }
+.back-link { font-size: 0.8rem; color: var(--color-primary); text-decoration: none; &:hover { text-decoration: underline; } }
+h1 { font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--text-primary); }
+.match-meta { font-size: 0.875rem; color: var(--text-secondary); margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+.stage-badge { background: var(--color-primary-muted); color: var(--color-primary); padding: 1px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+.match-result { font-size: 0.9rem; color: var(--text-primary); margin: 0; }
+
+.card { background: var(--surface-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; }
+.innings-card { display: flex; flex-direction: column; gap: 0.75rem; }
+.innings-header { display: flex; align-items: center; justify-content: space-between; h2 { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin: 0; } }
+.innings-total { font-size: 1.25rem; font-weight: 800; color: var(--color-primary); }
+.sub-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; margin: 0.5rem 0 0; }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  th { color: var(--text-muted); font-weight: 500; padding: 0.3rem 0.5rem; text-align: left; font-size: 0.7rem; text-transform: uppercase; }
+  td { padding: 0.45rem 0.5rem; border-top: 1px solid var(--border-color); color: var(--text-primary); }
+}
+
+.text-right { text-align: right; }
+.text-secondary { color: var(--text-secondary); }
+.font-bold { font-weight: 700; }
+.dismissal { font-size: 0.7rem; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.loading-placeholder { padding: 3rem; text-align: center; color: var(--text-muted); }

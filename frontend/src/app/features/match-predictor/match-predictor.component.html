@@ -1,0 +1,175 @@
+<div class="predictor-page">
+  <header class="page-header">
+    <div>
+      <h1>Match Predictor</h1>
+      <p class="text-secondary">ML-powered win probability prediction</p>
+    </div>
+    <span class="badge-model">XGBoost v2.1</span>
+  </header>
+
+  <!-- Prediction Form -->
+  <div class="predictor-layout">
+    <div class="form-card card">
+      <h2 class="card__title">Match Setup</h2>
+
+      <div class="form-group">
+        <label>Team A</label>
+        <select [ngModel]="formTeamAId()" (ngModelChange)="formTeamAId.set($event)" class="select">
+          <option value="">Select team A...</option>
+          @for (t of teams(); track t.id) {
+            <option [value]="t.id" [disabled]="t.id === formTeamBId()">{{ t.full_name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Team B</label>
+        <select [ngModel]="formTeamBId()" (ngModelChange)="formTeamBId.set($event)" class="select">
+          <option value="">Select team B...</option>
+          @for (t of teams(); track t.id) {
+            <option [value]="t.id" [disabled]="t.id === formTeamAId()">{{ t.full_name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Venue</label>
+        <select [ngModel]="formVenueId()" (ngModelChange)="formVenueId.set($event)" class="select">
+          <option value="">Select venue...</option>
+          @for (v of venues(); track v.id) {
+            <option [value]="v.id">{{ v.name }}, {{ v.city }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Season</label>
+          <select [ngModel]="formSeason()" (ngModelChange)="formSeason.set(+$event)" class="select">
+            @for (yr of seasons(); track yr) {
+              <option [value]="yr">{{ yr }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Stage</label>
+          <select [ngModel]="formStage()" (ngModelChange)="formStage.set($event)" class="select">
+            @for (s of stages; track s.value) {
+              <option [value]="s.value">{{ s.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Toss Winner</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="toss" value="team_a"
+              [ngModel]="formTossWinner()" (ngModelChange)="formTossWinner.set($event)" />
+            {{ formTeamAId() ? teamName(formTeamAId()) : 'Team A' }}
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="toss" value="team_b"
+              [ngModel]="formTossWinner()" (ngModelChange)="formTossWinner.set($event)" />
+            {{ formTeamBId() ? teamName(formTeamBId()) : 'Team B' }}
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Toss Decision</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="decision" value="bat"
+              [ngModel]="formTossDecision()" (ngModelChange)="formTossDecision.set($event)" />
+            Bat First
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="decision" value="field"
+              [ngModel]="formTossDecision()" (ngModelChange)="formTossDecision.set($event)" />
+            Field First
+          </label>
+        </div>
+      </div>
+
+      <button
+        class="btn btn--primary btn--full"
+        (click)="predict()"
+        [disabled]="!formTeamAId() || !formTeamBId() || !formVenueId() || loading()"
+      >
+        {{ loading() ? 'Predicting...' : 'Predict Winner' }}
+      </button>
+
+      @if (error()) {
+        <app-error-state [message]="error()!" [showRetry]="false"></app-error-state>
+      }
+    </div>
+
+    <!-- Results Panel -->
+    <div class="results-panel">
+      @if (result()) {
+        <!-- Win Probability Gauge -->
+        <div class="card result-card">
+          <div class="result-card__header">
+            <h2 class="card__title">Win Probability</h2>
+            <span class="confidence-badge" [style.background]="getConfidenceColor(result()!.confidence) + '22'" [style.color]="getConfidenceColor(result()!.confidence)">
+              {{ result()!.confidence | titlecase }} Confidence
+            </span>
+          </div>
+          <div echarts [options]="gaugeOption()" style="height:240px;"></div>
+          <div class="prob-bars">
+            <div class="prob-bar">
+              <span class="prob-bar__label" [style.color]="getColor(result()!.team_a.short_name)">{{ result()!.team_a.short_name }}</span>
+              <div class="prob-bar__track">
+                <div class="prob-bar__fill" [style.width]="(result()!.team_a.win_probability * 100) + '%'" [style.background]="getColor(result()!.team_a.short_name)"></div>
+              </div>
+              <span class="prob-bar__pct">{{ result()!.team_a.win_probability * 100 | number:'1.1-1' }}%</span>
+            </div>
+            <div class="prob-bar">
+              <span class="prob-bar__label" [style.color]="getColor(result()!.team_b.short_name)">{{ result()!.team_b.short_name }}</span>
+              <div class="prob-bar__track">
+                <div class="prob-bar__fill" [style.width]="(result()!.team_b.win_probability * 100) + '%'" [style.background]="getColor(result()!.team_b.short_name)"></div>
+              </div>
+              <span class="prob-bar__pct">{{ result()!.team_b.win_probability * 100 | number:'1.1-1' }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historical Context -->
+        <div class="card">
+          <h2 class="card__title">Historical Context</h2>
+          <div class="context-grid">
+            <div class="context-item">
+              <span class="context-item__value">{{ result()!.historical_context.h2h_total_matches }}</span>
+              <span class="context-item__label">H2H Matches</span>
+            </div>
+            <div class="context-item">
+              <span class="context-item__value" [style.color]="getColor(result()!.team_a.short_name)">{{ result()!.historical_context.team_a_h2h_wins }}</span>
+              <span class="context-item__label">{{ result()!.team_a.short_name }} Wins</span>
+            </div>
+            <div class="context-item">
+              <span class="context-item__value" [style.color]="getColor(result()!.team_b.short_name)">{{ result()!.historical_context.team_b_h2h_wins }}</span>
+              <span class="context-item__label">{{ result()!.team_b.short_name }} Wins</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature Importance -->
+        <div class="card">
+          <h2 class="card__title">Key Prediction Factors</h2>
+          <div echarts [options]="featureOption()" style="height:220px;"></div>
+        </div>
+      } @else {
+        <div class="empty-results">
+          <div class="empty-results__icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <p>Fill in the match details and click <strong>Predict Winner</strong> to see the ML-powered prediction.</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

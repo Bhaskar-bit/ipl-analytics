@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(ng version:*)",
+      "Bash(ng new:*)",
+      "Bash(npm install:*)",
+      "Bash(BASE=\"/c/Users/45IN/OneDrive/Documents/Portfolio App/Analytics app/frontend/src\")",
+      "Bash(mkdir -p \"$BASE/app/core/models\" \"$BASE/app/core/services\" \"$BASE/app/core/interceptors\" \"$BASE/app/core/utils\" \"$BASE/app/shared/components/nav-bar\" \"$BASE/app/shared/components/stat-card\" \"$BASE/app/shared/components/data-table\" \"$BASE/app/shared/components/loading-spinner\" \"$BASE/app/shared/components/error-state\" \"$BASE/app/shared/components/badge\" \"$BASE/app/shared/pipes\" \"$BASE/app/features/dashboard/components\" \"$BASE/app/features/teams/teams-list\" \"$BASE/app/features/teams/team-detail/components\" \"$BASE/app/features/players/players-list\" \"$BASE/app/features/players/player-detail/components\" \"$BASE/app/features/head-to-head/components\" \"$BASE/app/features/match-predictor/components\" \"$BASE/app/features/season-explorer/season-list\" \"$BASE/app/features/season-explorer/season-detail/components\" \"$BASE/app/features/season-explorer/match-scorecard\")",
+      "Bash(BASE=\"/c/Users/45IN/OneDrive/Documents/Portfolio App/Analytics app/backend\")",
+      "Bash(touch \"$BASE/app/__init__.py\" \"$BASE/app/routers/__init__.py\" \"$BASE/app/schemas/__init__.py\" \"$BASE/app/services/__init__.py\" \"$BASE/app/ml/__init__.py\" \"$BASE/app/utils/__init__.py\" \"$BASE/scripts/__init__.py\")",
+      "Bash(npx ng:*)",
+      "mcp__0d4274d0-544c-4fd2-bd37-0bef495a200b__list_organizations",
+      "mcp__0d4274d0-544c-4fd2-bd37-0bef495a200b__get_cost",
+      "mcp__0d4274d0-544c-4fd2-bd37-0bef495a200b__confirm_cost",
+      "mcp__0d4274d0-544c-4fd2-bd37-0bef495a200b__create_project",
+      "mcp__0d4274d0-544c-4fd2-bd37-0bef495a200b__apply_migration",
+      "mcp__0d4274d0-544c-4fd2-bd37-0bef495a200b__get_project_url",
+      "mcp__0d4274d0-544c-4fd2-bd37-0bef495a200b__get_publishable_keys",
+      "mcp__0d4274d0-544c-4fd2-bd37-0bef495a200b__execute_sql",
+      "Bash(gh auth:*)",
+      "Bash(git --version)",
+      "Bash(git config:*)"
+    ]
+  }
+}

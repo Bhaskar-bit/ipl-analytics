@@ -1,0 +1,71 @@
+<div class="player-detail" *ngIf="player(); else loading">
+
+  @if (error()) {
+    <app-error-state [message]="error()!" (retry)="loadStats()"></app-error-state>
+  }
+
+  <!-- Hero -->
+  <div class="player-hero">
+    <div class="player-hero__avatar">{{ player()!.display_name.charAt(0) }}</div>
+    <div class="player-hero__info">
+      <h1 class="player-hero__name">{{ player()!.display_name }}</h1>
+      <div class="player-hero__meta">
+        <span class="pill pill--blue">{{ player()!.primary_role | titlecase }}</span>
+        <span class="text-muted">{{ player()!.nationality }}</span>
+        <span class="text-muted">{{ player()!.batting_style }}</span>
+        <span class="text-muted" *ngIf="player()!.bowling_style">{{ player()!.bowling_style }}</span>
+      </div>
+    </div>
+    <!-- Form Index Gauge -->
+    <div class="form-gauge-card" *ngIf="formIndex()">
+      <p class="form-gauge-card__label">Form Index</p>
+      <div echarts [options]="formGaugeOption()" style="height:120px;width:120px;"></div>
+      <span class="form-trend" [class.trend-up]="formIndex()!.trend === 'rising'" [class.trend-down]="formIndex()!.trend === 'falling'">
+        {{ formIndex()!.trend | titlecase }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Batting Stats -->
+  @if (battingStats()) {
+    <div class="card">
+      <h2 class="card__title">Batting Statistics</h2>
+      <div class="stats-grid">
+        <app-stat-card label="Innings" [value]="battingStats()!.innings" icon="zap"></app-stat-card>
+        <app-stat-card label="Runs" [value]="battingStats()!.runs" icon="trophy"></app-stat-card>
+        <app-stat-card label="Average" [value]="battingStats()!.batting_average ?? 0" icon="zap"></app-stat-card>
+        <app-stat-card label="Strike Rate" [value]="battingStats()!.strike_rate ?? 0" icon="zap"></app-stat-card>
+        <app-stat-card label="Highest Score" [value]="battingStats()!.highest_score" icon="trophy"></app-stat-card>
+        <app-stat-card label="50s / 100s" [value]="battingStats()!.fifties + ' / ' + battingStats()!.hundreds" icon="trophy"></app-stat-card>
+        <app-stat-card label="Fours" [value]="battingStats()!.fours" icon="zap"></app-stat-card>
+        <app-stat-card label="Sixes" [value]="battingStats()!.sixes" icon="zap"></app-stat-card>
+      </div>
+    </div>
+  }
+
+  <!-- Bowling Stats -->
+  @if (bowlingStats() && bowlingStats()!.wickets > 0) {
+    <div class="card">
+      <h2 class="card__title">Bowling Statistics</h2>
+      <div class="stats-grid">
+        <app-stat-card label="Wickets" [value]="bowlingStats()!.wickets" icon="zap"></app-stat-card>
+        <app-stat-card label="Economy" [value]="bowlingStats()!.economy_rate ?? 0" icon="zap"></app-stat-card>
+        <app-stat-card label="Average" [value]="bowlingStats()!.bowling_average ?? 0" icon="zap"></app-stat-card>
+        <app-stat-card label="Strike Rate" [value]="bowlingStats()!.bowling_strike_rate ?? 0" icon="zap"></app-stat-card>
+        <app-stat-card label="Best Figures" [value]="bowlingStats()!.best_bowling_wickets + '/' + bowlingStats()!.best_bowling_runs" icon="trophy"></app-stat-card>
+        <app-stat-card label="Maidens" [value]="bowlingStats()!.maidens" icon="zap"></app-stat-card>
+      </div>
+    </div>
+  }
+
+  <!-- Heatmap -->
+  <div class="card">
+    <h2 class="card__title">Performance Heatmap (Over × Run Type)</h2>
+    <div echarts [options]="heatmapOption()" style="height:220px;"></div>
+  </div>
+
+</div>
+
+<ng-template #loading>
+  <div class="loading-placeholder">Loading player data...</div>
+</ng-template>

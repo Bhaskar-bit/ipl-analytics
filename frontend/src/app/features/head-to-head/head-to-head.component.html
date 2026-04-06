@@ -1,0 +1,105 @@
+<div class="h2h-page">
+  <header class="page-header">
+    <h1>Head-to-Head</h1>
+    <p class="text-secondary">Select two teams to compare historical records</p>
+  </header>
+
+  <!-- Team Selectors -->
+  <div class="selector-row">
+    <div class="team-selector">
+      <label>Team 1</label>
+      <select [ngModel]="selectedTeam1Id()" (ngModelChange)="selectedTeam1Id.set($event)" class="select">
+        <option value="">Select team...</option>
+        @for (t of teams(); track t.id) {
+          <option [value]="t.id">{{ t.full_name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="vs-badge">VS</div>
+
+    <div class="team-selector">
+      <label>Team 2</label>
+      <select [ngModel]="selectedTeam2Id()" (ngModelChange)="selectedTeam2Id.set($event)" class="select">
+        <option value="">Select team...</option>
+        @for (t of teams(); track t.id) {
+          <option [value]="t.id">{{ t.full_name }}</option>
+        }
+      </select>
+    </div>
+
+    <button
+      class="btn btn--primary"
+      (click)="compare()"
+      [disabled]="!selectedTeam1Id() || !selectedTeam2Id() || selectedTeam1Id() === selectedTeam2Id() || loading()"
+    >
+      {{ loading() ? 'Loading...' : 'Compare' }}
+    </button>
+  </div>
+
+  @if (error()) {
+    <app-error-state [message]="error()!" (retry)="compare()"></app-error-state>
+  }
+
+  <!-- Results -->
+  @if (matches().length) {
+    <!-- Summary Banner -->
+    <div class="summary-banner">
+      <div class="summary-banner__team" [style.--color]="getColor(team1()?.short_name ?? '')">
+        <span class="summary-banner__name">{{ team1()?.full_name }}</span>
+        <span class="summary-banner__wins">{{ team1Wins() }}</span>
+        <span class="summary-banner__label">Wins</span>
+      </div>
+      <div class="summary-banner__center">
+        <p class="summary-banner__total">{{ matches().length }} Matches</p>
+        <p class="summary-banner__nr">{{ noResults() }} No Results</p>
+      </div>
+      <div class="summary-banner__team summary-banner__team--right" [style.--color]="getColor(team2()?.short_name ?? '')">
+        <span class="summary-banner__name">{{ team2()?.full_name }}</span>
+        <span class="summary-banner__wins">{{ team2Wins() }}</span>
+        <span class="summary-banner__label">Wins</span>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-row">
+      <div class="card">
+        <h2 class="card__title">Win Distribution</h2>
+        <div echarts [options]="winSplitOption()" class="chart-md"></div>
+      </div>
+      <div class="card">
+        <h2 class="card__title">Win Timeline by Season</h2>
+        <div echarts [options]="winTimelineOption()" class="chart-md"></div>
+      </div>
+    </div>
+
+    <!-- Match History Table -->
+    <div class="card">
+      <h2 class="card__title">Match History ({{ matches().length }} matches)</h2>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th><th>Season</th><th>Venue</th>
+              <th>{{ team1()?.short_name }}</th><th>{{ team2()?.short_name }}</th>
+              <th>Winner</th><th>Margin</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of matches(); track m.id) {
+              <tr>
+                <td>{{ m.date | date:'d MMM y' }}</td>
+                <td>{{ m.season }}</td>
+                <td class="text-secondary">{{ m.venue_name }}</td>
+                <td>{{ m.team1_score }}/{{ m.team1_wickets }}</td>
+                <td>{{ m.team2_score }}/{{ m.team2_wickets }}</td>
+                <td class="font-bold">{{ m.winner_short_name ?? 'NR' }}</td>
+                <td class="text-secondary">{{ m.win_margin ? m.win_margin + ' ' + m.win_by : '-' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

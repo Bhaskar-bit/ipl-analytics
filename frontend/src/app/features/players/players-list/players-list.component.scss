@@ -1,0 +1,92 @@
+.page { padding: 1.5rem; max-width: 1200px; margin: 0 auto; }
+.page-header { margin-bottom: 1.25rem; h1 { font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--text-primary); } }
+.text-secondary { color: var(--text-secondary); font-size: 0.875rem; margin: 0.25rem 0 0; }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  color: var(--text-muted);
+  flex: 1;
+  max-width: 320px;
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  width: 100%;
+  &::placeholder { color: var(--text-muted); }
+}
+
+.role-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.role-btn {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  background: var(--surface-card);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover { border-color: var(--color-primary); color: var(--color-primary); }
+  &--active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.player-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+
+  &__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-primary-muted);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  &__name { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin: 0; }
+  &__role { font-size: 0.75rem; color: var(--text-secondary); margin: 0.15rem 0 0; }
+  &__nat { font-size: 0.7rem; color: var(--text-muted); margin: 0; }
+}
+
+.empty-state { grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 3rem; }
