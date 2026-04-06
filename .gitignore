@@ -55,3 +55,6 @@ desktop.ini
 htmlcov/
 .pytest_cache/
 .tox/
+
+.vercel
+api/
