@@ -21,7 +21,8 @@ backend/.env
 !.env.example
 
 # ── ML Model artifacts (large binary files) ───────────────────────────────────
-backend/app/ml/models/*.joblib
+# Allow the trained model files so Render can access them at deploy time
+# backend/app/ml/models/*.joblib
 backend/app/ml/models/*.pkl
 backend/app/ml/models/*.model
 

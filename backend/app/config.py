@@ -7,7 +7,12 @@ class Settings(BaseSettings):
     SUPABASE_SERVICE_KEY: str = ""
     MODEL_PATH: str = "app/ml/models/xgb_win_predictor.joblib"
     LABEL_ENCODERS_PATH: str = "app/ml/models/label_encoders.joblib"
-    CORS_ORIGINS: List[str] = ["http://localhost:4200", "http://localhost:3000"]
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:4200",
+        "http://localhost:3000",
+        "https://ipl-analytics-mocha.vercel.app",
+        "https://ipl-analytics.vercel.app",
+    ]
     HOST: str = "0.0.0.0"
     PORT: int = 8000
 
