@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit {
   topBatsmen = signal<BattingLeader[]>([]);
   runTrend = signal<RunTrendPoint[]>([]);
   error = signal<string | null>(null);
-  currentSeason = signal<number>(2024);
+  currentSeason = signal<number>(new Date().getFullYear());
 
   runTrendChartOption = signal<EChartsOption>({});
   sixesChartOption = signal<EChartsOption>({});
@@ -36,9 +36,20 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const season = this.seasonService.currentSeason();
-    this.currentSeason.set(season);
-    this.loadData(season);
+    // Always fetch latest seasons first so currentSeason reflects the most recent one
+    this.seasonService.getAllSeasons().subscribe({
+      next: () => {
+        const season = this.seasonService.currentSeason();
+        this.currentSeason.set(season);
+        this.loadData(season);
+      },
+      error: () => {
+        // Fallback: load with whatever season is set
+        const season = this.seasonService.currentSeason();
+        this.currentSeason.set(season);
+        this.loadData(season);
+      },
+    });
   }
 
   loadData(season: number): void {

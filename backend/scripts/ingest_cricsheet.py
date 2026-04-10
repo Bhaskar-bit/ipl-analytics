@@ -292,11 +292,11 @@ def ingest_match_file(filepath: Path, force: bool = False) -> bool:
                 })
 
                 if len(batch) >= 500:
-                    _retry(lambda b=batch[:]: sb.table("deliveries").insert(b).execute())
+                    _retry(lambda b=batch[:]: sb.table("deliveries").upsert(b, on_conflict="innings_id,over_number,ball_number").execute())
                     batch.clear()
 
             if batch:
-                _retry(lambda b=batch[:]: sb.table("deliveries").insert(b).execute())
+                _retry(lambda b=batch[:]: sb.table("deliveries").upsert(b, on_conflict="innings_id,over_number,ball_number").execute())
 
         log_ingestion(match_id, "success")
         return True

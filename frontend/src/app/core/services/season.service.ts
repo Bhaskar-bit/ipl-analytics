@@ -8,7 +8,7 @@ import { CacheService } from './cache.service';
 @Injectable({ providedIn: 'root' })
 export class SeasonService {
   private _seasons = signal<Season[]>([]);
-  private _currentSeason = signal<number>(2024);
+  private _currentSeason = signal<number>(new Date().getFullYear());
 
   readonly seasons = this._seasons.asReadonly();
   readonly currentSeason = this._currentSeason.asReadonly();
